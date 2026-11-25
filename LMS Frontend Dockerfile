@@ -1,0 +1,15 @@
+FROM node:20 AS builder
+
+WORKDIR /mydir
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+RUN npm build
+
+FROM nginx
+WORKDIR /mydir
+COPY --from=builder /mydir/dist/ /usr/share/nginx/html
+CMD ["nginx", "-g", "daemon off;"]
